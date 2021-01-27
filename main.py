@@ -1,10 +1,11 @@
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 from discord.utils import get
 import os
 import datetime as dt
 import pytz
 from timetable import timetable
+import asyncio
 
 client = commands.Bot(command_prefix="?")
 
@@ -22,6 +23,9 @@ days = {
 async def on_ready():
     print(f'Logged in as {client.user.name}')
     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name='?class'))
+    reminder1.start()
+    reminder2.start()
+    reminder3.start()
 
 @client.event
 async def on_message(ctx):
@@ -96,5 +100,82 @@ async def on_message(ctx):
                 embed.set_footer(icon_url = ctx.author.avatar_url, text=f'Requested by {ctx.author}')
             await ctx.channel.send(embed=embed)
 
-client.run(os.getenv('TOKEN'))
+@tasks.loop(hours=24)
+async def reminder1():
+    message_channel = client.get_channel(803678292792180787)
+    now = dt.datetime.now(pytz.timezone('Asia/Kolkata'))
+    for i in range(2):
+        j = timetable[now.weekday()][i][0]
+        if i == 0:
+            embed = discord.Embed(title="CS-A Class in 15 mins", description=f"Reminder for class at {j.split(' ')[3]} {j.split(' ')[4]}", color= discord.Color.red())
+        else:
+            embed = discord.Embed(title="CS-B Class in 15 mins", description=f"Reminder for class at {j.split(' ')[3]} {j.split(' ')[4]}", color= discord.Color.red())
+        temp = j.split(' ')
+        embed.add_field(name="Subject", value=f"{temp[0]} {temp[1]}", inline=True)
+        embed.add_field(name="Time", value=temp[3], inline=True)
+        embed.add_field(name="Meet Link", value=temp[-1], inline=True)
+        embed.set_thumbnail(url= client.user.avatar_url)
+        await message_channel.send(embed=embed)
 
+@reminder1.before_loop
+async def before_reminder1():
+    for _i in range(60 * 60 * 24): # 24 hours
+        now = dt.datetime.now(pytz.timezone('Asia/Kolkata'))
+        if now.hour == 8 and now.minute == 45:
+            print("It's 8:45AM")
+            return
+        await asyncio.sleep(60)
+
+@tasks.loop(hours=24)
+async def reminder2():
+    message_channel = client.get_channel(803678292792180787)
+    now = dt.datetime.now(pytz.timezone('Asia/Kolkata'))
+    for i in range(2):
+        j = timetable[now.weekday()][i][1]
+        if i == 0:
+            embed = discord.Embed(title="CS-A Class in 15 mins", description=f"Reminder for class at {j.split(' ')[3]} {j.split(' ')[4]}", color= discord.Color.red())
+        else:
+            embed = discord.Embed(title="CS-B Class in 15 mins", description=f"Reminder for class at {j.split(' ')[3]} {j.split(' ')[4]}", color= discord.Color.red())
+        temp = j.split(' ')
+        embed.add_field(name="Subject", value=f"{temp[0]} {temp[1]}", inline=True)
+        embed.add_field(name="Time", value=temp[3], inline=True)
+        embed.add_field(name="Meet Link", value=temp[-1], inline=True)
+        embed.set_thumbnail(url= client.user.avatar_url)
+        await message_channel.send(embed=embed)
+
+@reminder2.before_loop
+async def before_reminder2():
+    for _i in range(60 * 60 * 24): # 24 hours
+        now = dt.datetime.now(pytz.timezone('Asia/Kolkata'))
+        if now.hour == 10 and now.minute == 30:
+            print("It's 10:30AM")
+            return
+        await asyncio.sleep(60)
+
+@tasks.loop(hours=24)
+async def reminder3():
+    message_channel = client.get_channel(803678292792180787)
+    now = dt.datetime.now(pytz.timezone('Asia/Kolkata'))
+    for i in range(2):
+        j = timetable[now.weekday()][i][2]
+        if i == 0:
+            embed = discord.Embed(title="CS-A Class in 15 mins", description=f"Reminder for class at {j.split(' ')[3]} {j.split(' ')[4]}", color= discord.Color.red())
+        else:
+            embed = discord.Embed(title="CS-B Class in 15 mins", description=f"Reminder for class at {j.split(' ')[3]} {j.split(' ')[4]}", color= discord.Color.red())
+        temp = j.split(' ')
+        embed.add_field(name="Subject", value=f"{temp[0]} {temp[1]}", inline=True)
+        embed.add_field(name="Time", value=temp[3], inline=True)
+        embed.add_field(name="Meet Link", value=temp[-1], inline=True)
+        embed.set_thumbnail(url= client.user.avatar_url)
+        await message_channel.send(embed=embed)
+
+@reminder3.before_loop
+async def before_reminder3():
+    for _i in range(60 * 60 * 24): # 24 hours
+        now = dt.datetime.now(pytz.timezone('Asia/Kolkata'))
+        if now.hour == 12 and now.minute == 45:
+            print("It's 12:45PM")
+            return
+        await asyncio.sleep(60)
+
+client.run(os.getenv('TOKEN'))
