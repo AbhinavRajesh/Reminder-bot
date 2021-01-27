@@ -101,8 +101,8 @@ async def on_message(ctx):
             await ctx.channel.send(embed=embed)
 
 @tasks.loop(hours=24)
-async def reminder1():
-    message_channel = client.get_channel(803678292792180787)
+async def reminder1(): # Reminding at 8:45 AM
+    message_channel = client.get_channel(803888120273436752) # Channel ID here Currently would post at #bot-testing
     now = dt.datetime.now(pytz.timezone('Asia/Kolkata'))
     for i in range(2):
         j = timetable[now.weekday()][i][0]
@@ -127,8 +127,8 @@ async def before_reminder1():
         await asyncio.sleep(60)
 
 @tasks.loop(hours=24)
-async def reminder2():
-    message_channel = client.get_channel(803678292792180787)
+async def reminder2(): # Reminding at 10:30 AM
+    message_channel = client.get_channel(803888120273436752)
     now = dt.datetime.now(pytz.timezone('Asia/Kolkata'))
     for i in range(2):
         j = timetable[now.weekday()][i][1]
@@ -153,8 +153,8 @@ async def before_reminder2():
         await asyncio.sleep(60)
 
 @tasks.loop(hours=24)
-async def reminder3():
-    message_channel = client.get_channel(803678292792180787)
+async def reminder3(): # Reminding at 12:45 PM
+    message_channel = client.get_channel(803888120273436752)
     now = dt.datetime.now(pytz.timezone('Asia/Kolkata'))
     for i in range(2):
         j = timetable[now.weekday()][i][2]
